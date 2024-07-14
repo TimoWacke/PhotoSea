@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <img src="http://localhost:3000/live" alt="">
+    <label for="">Your rating:</label>
+    <input type="range" id="range" min="0" max="100" value="50">
+    <label for="">Ai rating:</label>
+    <input type="range" id="range" min="0" max="100" value="50" disabled>
+    <button id="btn" onclick="submit()">Submit</button>
+    <script>
+       
+        fetch('http://localhost:3000/next')
+            .then(fetch('http://localhost:3000/ai-rating'))
+
+        function submit() {
+            const range = document.getElementById('range').value;
+            // get with param
+            fetch('http://localhost:3000/rate/' + range, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(
+                // reload the page
+                window.location.reload()
+        )
+        }
+
+        function getAiRating() {
+            print('get ai rating')
+            fetch('http://localhost:3000/ai-rating')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('range').value = data.ai_rating;
+                })
+        }
+
+    </script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</body>
+</html>

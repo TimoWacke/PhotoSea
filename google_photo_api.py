@@ -2,17 +2,18 @@ import requests
 from google_auth_oauthlib.flow import InstalledAppFlow
 
 class GooglePhotosHook():
-    def __init__(self, secret_file, scopes):
+    def __init__(self, secret_file, scopes, token=False):
  
         def get_token(secret_file, scopes):
             flow = InstalledAppFlow.from_client_secrets_file(
                 secret_file, scopes)
             credentials = flow.run_local_server()
+            print("Obtained new token:", credentials.token)
             return credentials.token
             
         self.headers = {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + get_token(secret_file, scopes)
+            'Authorization': 'Bearer ' + (token if token else get_token(secret_file, scopes))
         }
         
         self.page_token = None
@@ -22,7 +23,10 @@ class GooglePhotosHook():
         
         url = 'https://photoslibrary.googleapis.com/v1/mediaItems:search'
         body = {
-            "pageSize": 50,
+            "pageSize": 5,
+            "filters": {
+                "includeArchivedMedia": False,
+            }
         }
         if self.page_token:
             body["pageToken"] = self.page_token
