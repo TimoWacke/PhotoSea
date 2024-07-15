@@ -23,9 +23,20 @@ class GooglePhotosHook():
         
         url = 'https://photoslibrary.googleapis.com/v1/mediaItems:search'
         body = {
-            "pageSize": 5,
+            "pageSize": 10,
             "filters": {
                 "includeArchivedMedia": False,
+                "mediaTypeFilter": {
+                    "mediaTypes": [
+                        "PHOTO"
+                    ],
+                },
+                "contentFilter": {
+                    "excludedContentCategories": [
+                        "SCREENSHOTS",
+                        "DOCUMENTS",
+                    ],
+                },
             }
         }
         if self.page_token:

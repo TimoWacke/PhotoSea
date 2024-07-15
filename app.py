@@ -7,7 +7,7 @@ from net_cnn import Net
 app = flask.Flask(__name__)
 CORS(app)
 
-token = "ya29.a0AXooCgtH59BeJ0HgntmYYYEjL7IF9xe_FHqBTg5pcfOAm0RQJl8Ltt0c7JfsgGhoAoboI13N2CujEpWRxfLjGHiG7cRWF0EYhNkIRoYUq6Qn_P1-9lb_GUKWwPXx3NCMOT2MMdhNdt6zk7IB12S-jzkf7hUfVd3xKKLHaCgYKAZYSARISFQHGX2Mi5w-jy5KoMljokFamACan6w0171"
+token = "ya29.a0AXooCgvIab6Ji4UZFwXNm_fxpnHaxPmPYDA75fKKAkaBJ5iy9Ny1BrjfJlbSep5E6bhbTIe8yHcbZ053Wjd-Fc0XvY9MKMLEj6pwVxfgHzoczPEGT3J15jPFWm9lxezujzWuQX6H7ImT3NsyNBcCiVnFB0YtflzeeSelaCgYKAQASARISFQHGX2Mit6OYiTfWIZKOl9e90hr7Lw0171"
 # token = False
 
 ghook = GooglePhotosHook("secret.json", ['https://www.googleapis.com/auth/photoslibrary.readonly'], token)
@@ -17,14 +17,15 @@ pipeline = Pipeline(ghook, model)
 
 # /new image
 @app.route('/next')
-def new_image():
-    pipeline.load_one()
+async def new_image():
+    await pipeline.load_one()
     return "New image loaded"
 
 # /live
 @app.route('/live')
 def live():
-    filepath = pipeline.current_image
+    print("/live sents", pipeline.current_image_path)
+    filepath = pipeline.current_image_path
     return flask.send_file(filepath)
 
 # /rate
@@ -34,7 +35,6 @@ def rate():
     pipeline.set_user_rating_for_current_image(rating)
     return "Rating set to " + rating
 
-
 # /ai-rating
 @app.route('/ai-rating')
 def ai_rating():
@@ -42,7 +42,6 @@ def ai_rating():
     return {"ai_rating": rating}
 
 # host
-
 if __name__ == '__main__':
     app.run(port=3000)
     
